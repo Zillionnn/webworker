@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Simple Web Workers Example</h1>
+<p id="support">Your browser doesn't support web workers.</p>
+<button id="stopButton">Stop Task</button>
+<button id="helloButton">Post a Message</button>
+
+<p id="worker-says"></p>
+</body>
+</html>
+<script>
+    //web workers 不能访问document对象，
+    //importScripts("echoWorker.js");
+    function stopWorker() {
+        worker.terminate();
+    }
+
+    function messageHandler(e) {
+        //postMessage("worker says:"+e.data+"  too");
+        console.log("messageHandler>>"+e.data);
+    }
+
+    function errorHandle(e) {
+        console.warn(e.message,e);
+    }
+
+    function loadDemo() {
+        if(typeof (Worker)!=="undefined"){
+            document.getElementById("support").innerHTML="Excellent! Your browser supports Web Workers";
+
+            worker=new Worker("echoWorker.js");
+            worker.addEventListener("message",messageHandler,true);
+            worker.addEventListener("error",errorHandle,true);
+
+            document.getElementById("helloButton").onclick=function () {
+                worker.postMessage("Here's a message for you ");
+            };
+
+            document.getElementById("stopButton").onclick=stopWorker;
+        }
+    }
+
+    window.addEventListener("load",loadDemo,true);
+
+
+
+</script>
